@@ -1,0 +1,39 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: always
+    env_file:
+      - ./backend/.env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    # No "ports:" here — Postgres doesn't need to be reachable from
+    # outside the EC2 instance, only from the backend container.
+
+  backend:
+    image: jamilsafi/todo-backend:v1
+    restart: always
+    env_file:
+      - ./backend/.env
+    depends_on:
+      db:
+        condition: service_healthy
+    expose:
+      - "8000"
+    # No "ports:" mapping to the host either — Nginx will be the only
+    # thing exposed to the internet, and it proxies to backend internally.
+
+  frontend:
+    image: jamilsafi/todo-frontend:v1
+    restart: always
+    ports:
+      - "80:8080"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
