@@ -49,7 +49,7 @@ class JWTAutoRefreshMiddleware(MiddlewareMixin):
                 value = new_token,
                 httponly = True,
                 secure = settings.COOKIE_SECURE,
-                samesite = "Lax",
+                samesite = settings.COOKIE_SAMESITE,
                 max_age = 60 * 30,
             )
         return response

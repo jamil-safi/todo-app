@@ -31,6 +31,19 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='', cast=Csv())
 # HTTPS to be stored by the browser at all. Set to True once HTTPS is live.
 COOKIE_SECURE = config('COOKIE_SECURE', default=True, cast=bool)
 
+# "Lax" for same-origin setups (e.g. EC2 + Nginx proxying frontend and
+# backend under one domain). "None" for cross-origin setups (e.g. Vercel
+# frontend + Render backend on different domains) — but "None" is only
+# valid when COOKIE_SECURE is also True, since browsers reject
+# SameSite=None cookies that aren't also Secure.
+COOKIE_SAMESITE = config('COOKIE_SAMESITE', default='Lax')
+
+# Render (and any platform terminating HTTPS at a proxy layer) forwards
+# the original protocol via this header. Without this, Django can't tell
+# a request arrived over HTTPS, which affects is_secure() and, indirectly,
+# whether Secure cookies behave correctly.
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 
 # Application definition
 

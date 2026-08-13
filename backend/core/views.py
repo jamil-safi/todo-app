@@ -67,7 +67,7 @@ class LoginView(APIView):
             value = tokens["access"],
             httponly = True,
             secure = settings.COOKIE_SECURE,
-            samesite = "Lax",              
+            samesite = settings.COOKIE_SAMESITE,
             max_age = 60 * 30,
             path="/", 
         )
@@ -77,7 +77,7 @@ class LoginView(APIView):
             value = tokens["refresh"],
             httponly = True,
             secure = settings.COOKIE_SECURE,
-            samesite = "Lax",
+            samesite = settings.COOKIE_SAMESITE,
             max_age = 60 * 60 * 24 * 7,
             path="/", 
         )
